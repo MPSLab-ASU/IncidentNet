@@ -7,6 +7,9 @@ two_intersections/evaluation_datasets/*.csv
 # Ignoring simulation files
 simulation_files/partial_tempe_data
 
+# Ignoring processed datasets
+city_scale/CNN_DNN/data
+
 # Distribution / packaging
 .Python
 build/
