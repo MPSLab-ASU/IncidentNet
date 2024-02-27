@@ -1,10 +1,8 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
+# Ignoring raw datasets
+city_scale/raw_datasets/*.csv
+city_scale/evaluation_datasets/*.csv
+two_intersections/raw_datasets/*.csv
+two_intersections/evaluation_datasets/*.csv
 
 # Distribution / packaging
 .Python
