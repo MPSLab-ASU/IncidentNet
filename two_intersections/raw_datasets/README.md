@@ -1,3 +1,4 @@
-- Raw datasets generated as the simulation runs.
+# To do fill this
 
-- These files can be large when the simulation runs for multiple days, hence these are ignored. you can download them from : URLs
+
+Contains raw datasets which are big in size hence ignored from commits.
