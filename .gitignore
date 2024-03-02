@@ -7,9 +7,6 @@ two_intersections/evaluation_datasets/*.csv
 #Ignoring runs folder of tensorboard
 runs/
 
-#Ignoring environment files
-environments/
-
 # Ignoring simulation files
 simulation_files/partial_tempe_data
 
@@ -130,6 +127,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+environments/
 .env
 .venv
 env/
