@@ -4,6 +4,9 @@ city_scale/evaluation_datasets/*.csv
 two_intersections/raw_datasets/*.csv
 two_intersections/evaluation_datasets/*.csv
 
+#Ignoring runs folder of tensorboard
+runs/
+
 #Ignoring environment files
 environments/
 
