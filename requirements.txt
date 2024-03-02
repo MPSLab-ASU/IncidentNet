@@ -2,3 +2,6 @@ traci
 pandas
 tensorboard
 torch
+scikit-learn
+matplotlib
+seaborn
