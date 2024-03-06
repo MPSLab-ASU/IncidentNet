@@ -5,3 +5,4 @@ torch
 scikit-learn
 matplotlib
 seaborn
+torchsummary
