@@ -99,8 +99,8 @@ def resume_speed(slowed_cars,clear_flag):
 
 
 #INCIDENT VARIABLES
-ACCIDENT_ODDS = 1_00_000 # HIGHER Value means odds of inicident happening is low
-NUMBER_OF_INCIDENTS = 750 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
+ACCIDENT_ODDS = 200#1_00_000 # HIGHER Value means odds of inicident happening is low
+NUMBER_OF_INCIDENTS = 1#750 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
 accident_flag = False
 accident_id = "None"
 incident_type = "None" #Stores types of incident
@@ -120,7 +120,7 @@ incident_count = 0
 incident_lane = -1
 
 #SIMULATION VARIABLES
-SIMULATION_DURATION = 2_592_000
+SIMULATION_DURATION = 10_000#2_592_000
 DAY_LENGTH = 86_400
 INCIDENT_HIGHLIGHT_COLOR = (255,0,0)
 SLOWED_CARS_HIGHLIGHT_COLOR = ()
@@ -236,8 +236,8 @@ outgoing_vehicles = []
 
 # CSV write related variables
 time_of_run = datetime.now()
-vehicle_file_name = f"datasets/vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
-traffic_file_name = f"datasets/trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+vehicle_file_name = f"raw_datasets/vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+traffic_file_name = f"raw_datasets/trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 time_file_name = f"time_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 
 traffic_dataset_headers = ['step' ,'time_of_day' ,'identified_edge'  ,'junction_mean_speed'  ,'traffic_count'  ,'traffic_occupancy' ,'vehicles_per_lane_1' ,'vehicles_per_lane_0'  ,'lane_mean_speed_0'  ,'lane_mean_speed_1'  ,'incident_edge'  ,'incident_start_time'  ,'incident_type'  ,'accident_label' ,'accident_id'  ,'accident_duration'  ,"incident_lane"  ]
@@ -252,7 +252,8 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
     trafficWriter.writerow(traffic_dataset_headers)
     vehicleWriter.writerow(vehicle_dataset_headers)
 
-    sumo_cmd = ["sumo", "-c", "partial_tempe_data/osm.sumocfg"]
+    sumo_cmd = ["sumo", "-c", "/home/local/ASURITE/speddira/dev/traffic_sense_net/simulation_files/partial_tempe_data/osm.sumocfg"]
+    print(f"Scale chosen is {scale}")
     traci.start(sumo_cmd)
     traci.simulation.setScale(scale)
     start_time = time.time()
@@ -282,7 +283,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
         traci.simulation.setScale(traffic)
 
         # Accident happen ?
-        if(incident_count<NUMBER_OF_INCIDENTS and step > 1000):
+        if(incident_count<NUMBER_OF_INCIDENTS and step > 2000):
             accident_flag = False if incident_on_road else accident_probability_machine(ACCIDENT_ODDS,step,incident_start_timestep)
 
         
