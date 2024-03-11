@@ -7,6 +7,10 @@ two_intersections/evaluation_datasets/*.csv
 #Ignoring runs folder of tensorboard
 runs/
 
+
+#Ignoring saved models
+saved_models/
+
 # Ignoring simulation files
 simulation_files/partial_tempe_data
 
