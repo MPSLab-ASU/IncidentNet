@@ -9,7 +9,7 @@ runs/
 
 
 #Ignoring saved models
-saved_models/
+saved_models/*.pth
 
 # Ignoring simulation files
 simulation_files/partial_tempe_data
