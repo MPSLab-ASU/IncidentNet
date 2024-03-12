@@ -119,7 +119,6 @@ def prepare_data(df_traffic, num_of_junctions):
         "junction_mean_speed",
         "traffic_count",
         "traffic_occupancy",
-        "identified_edge",
         "vehicles_per_lane_1",
         "vehicles_per_lane_0",
         "lane_mean_speed_0",
