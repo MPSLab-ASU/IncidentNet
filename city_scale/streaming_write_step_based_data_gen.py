@@ -28,7 +28,7 @@ def accident_probability_machine(accident_odds,step,last_incident_step):
     
     cars_list = traci.vehicle.getIDList()
     
-    if step - last_incident_step < 7_800:
+    if step - last_incident_step < 7_200:
         return False
     
     for object in cars_list:
