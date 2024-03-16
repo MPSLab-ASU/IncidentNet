@@ -7,6 +7,9 @@ two_intersections/evaluation_datasets/*.csv
 #Ignoring runs folder of tensorboard
 runs/
 
+# Processed Datasets
+processed_datasets/
+
 
 #Ignoring saved models
 saved_models/*.pth
