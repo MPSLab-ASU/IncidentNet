@@ -99,8 +99,8 @@ def resume_speed(slowed_cars,clear_flag):
 
 
 #INCIDENT VARIABLES
-ACCIDENT_ODDS = 200#1_00_000 # HIGHER Value means odds of inicident happening is low
-NUMBER_OF_INCIDENTS = 1#750 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
+ACCIDENT_ODDS = 900_000 # HIGHER Value means odds of inicident happening is low
+NUMBER_OF_INCIDENTS = 100 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
 accident_flag = False
 accident_id = "None"
 incident_type = "None" #Stores types of incident
@@ -120,7 +120,7 @@ incident_count = 0
 incident_lane = -1
 
 #SIMULATION VARIABLES
-SIMULATION_DURATION = 10_000#2_592_000
+SIMULATION_DURATION = 1_296_000#2_592_000
 DAY_LENGTH = 86_400
 INCIDENT_HIGHLIGHT_COLOR = (255,0,0)
 SLOWED_CARS_HIGHLIGHT_COLOR = ()
@@ -133,11 +133,33 @@ time_capture_list = []
 accident_happend_on_same_day = False
 slowed_cars = set()
 
-INCOMING_EDGES = ['436794670','436791113#0','436794680#0','436940278','-643913497','436943745#0','351673438','-613687451#1','436943750#0','436943762#0','-436942356#1','436942362#0','436789580#1','436942357','436794669','1051038541#0','-436794679#3','533371302#0','436942374','436790491','-436942381#3']
+# INCOMING_EDGES = ['436794670','436791113#0','436794680#0','436940278','-643913497','436943745#0','351673438','-613687451#1','436943750#0','436943762#0','-436942356#1','436942362#0','436789580#1','436942357','436794669','1051038541#0','-436794679#3','533371302#0','436942374','436790491','-436942381#3']
 
-OUTGOING_EDGES = ['533573776#0','5607328#0','519448767','436940270','-436943745#2','436943742','436943774','436943743#0','-436943762#2','436942356#0','-436942362#3','436789564#0','531969915#0','436794679#0','-1088637809#1','436942385#0','-436794676#1','436790495','-1033824750','30031286#0','436942381#0']
+# OUTGOING_EDGES = ['533573776#0','5607328#0','519448767','436940270','-436943745#2','436943742','436943774','436943743#0','-436943762#2','436942356#0','-436942362#3','436789564#0','531969915#0','436794679#0','-1088637809#1','436942385#0','-436794676#1','436790495','-1033824750','30031286#0','436942381#0']
 
-edges_with_sensors = INCOMING_EDGES + OUTGOING_EDGES
+junction_sensors = {                            
+            1:["533573776#0","436794680#0","256917837#0","436791498#0","436794701#0","-436794701#3","5607328#0","436791113#0"],
+            2:["436794679#0","-436794679#3","436942387#0","436942371#0","-1088637809#1","436794670","436942385#0","1051038541#0"],
+            3:["436942349#0","-436942349#3","-403117287#3","403117287#0","-436794676#1","436794669","531969915#0","436942357"],
+            5:["30031286#0","436790491","436942381#0","-436942381#3","436790495","533371302#0","-1033824750","436942374"],
+            6:["422264711#0","422264712#0","-436942362#3","436942362#0","436789564#0","436789580#1","436942356#0","-436942356#1"],
+            7:["436940270","-643913497","519448767","436940278","436940284","-597312446","422267251","422267252"],
+            8:["436943742","351673438","436943774","-613687451#1","-436943745#2","436943745#0","-436943776#4","436943776#0"],
+            9:["406379332","436943746#0","-436943762#2","436943762#0","436943743#0","436943750#0","436943757#0","-436943757#1"]
+            }
+
+edges_with_sensors = []
+junctions = []
+for key in junction_sensors.keys():
+    
+    edges_with_sensors = edges_with_sensors + junction_sensors[key]
+    for i in range(len(junction_sensors[key])):
+        junctions.append(key)
+
+print(f"Total number of sensors used in this simulation {len(edges_with_sensors)}")
+print(f"Length of junctions list  {len(junctions)}")
+
+
 
 ACCIDENT_EDGE = ["934465920",
                  "5614812#0",
@@ -236,12 +258,12 @@ outgoing_vehicles = []
 
 # CSV write related variables
 time_of_run = datetime.now()
-vehicle_file_name = f"raw_datasets/vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
-traffic_file_name = f"raw_datasets/trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+vehicle_file_name = f"evaluation_datasets/V2_eval_vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+traffic_file_name = f"evaluation_datasets/V2_eval_trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 time_file_name = f"time_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 
-traffic_dataset_headers = ['step' ,'time_of_day' ,'identified_edge'  ,'junction_mean_speed'  ,'traffic_count'  ,'traffic_occupancy' ,'vehicles_per_lane_1' ,'vehicles_per_lane_0'  ,'lane_mean_speed_0'  ,'lane_mean_speed_1'  ,'incident_edge'  ,'incident_start_time'  ,'incident_type'  ,'accident_label' ,'accident_id'  ,'accident_duration'  ,"incident_lane"  ]
-vehicle_dataset_headers = ['step','time_of_day','car_id','identified_edge','identified_lane','vehicle_speed','vehicle_acceleration']
+traffic_dataset_headers = ['step' ,'time_of_day' ,'identified_edge'  ,'junction_mean_speed'  ,'traffic_count'  ,'traffic_occupancy' ,'vehicles_per_lane_1' ,'vehicles_per_lane_0'  ,'lane_mean_speed_0'  ,'lane_mean_speed_1'  ,'incident_edge'  ,'incident_start_time'  ,'incident_type'  ,'accident_label' ,'accident_id'  ,'accident_duration'  ,"incident_lane", "junction"  ]
+vehicle_dataset_headers = ['step','time_of_day','car_id','identified_edge','identified_lane','vehicle_speed','vehicle_acceleration','junction']
 
 
 with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 'w', newline='') as file2:
@@ -288,7 +310,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
 
         
 
-        for edge in edges_with_sensors:
+        for edge,junction_num in zip(edges_with_sensors,junctions):
             traffic_row = []
             traffic_row.append(step) # index : 0 ; step of simultation
             traffic_row.append(step%DAY_LENGTH) # index : 1 ; time of the day
@@ -307,6 +329,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
             traffic_row.append(accident_id) # index : 14 ; id of accident
             traffic_row.append(incident_duration_choice) # index : 15 ; duration of incident
             traffic_row.append(incident_lane) # index : 16 ; lane of incident
+            traffic_row.append(junction_num) # index : 17 ; junction of edge
 
             vehicle_ids = traci.edge.getLastStepVehicleIDs(edge)
             for vehicle in vehicle_ids:
@@ -322,6 +345,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
                 vehicle_row.append(lane_index) # index : 4
                 vehicle_row.append(traci.vehicle.getSpeed(vehicle)) # index : 5
                 vehicle_row.append(traci.vehicle.getAcceleration(vehicle)) # index : 6
+                vehicle_row.append(junction_num) # index : 17 ; junction of edge
                 # vehicle_row.append(incident_edge) # index : 7
                 # vehicle_row.append(incident_start_timestep) # index : 8
                 # vehicle_row.append(incident_type) # index : 9

@@ -7,3 +7,5 @@ matplotlib
 seaborn
 torchsummary
 networkx
+xgboost
+jupyterlab
