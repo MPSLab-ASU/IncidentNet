@@ -4,8 +4,8 @@ TRAFFIC_DATASET_PATH = "/home/local/ASURITE/speddira/dev/archived/traffic_sense_
 VEHICLE_DATASET_PATH = "/home/local/ASURITE/speddira/dev/archived/traffic_sense_net/city_scale/raw_datasets/vehicleDataset_2024-2-16_1915hours_2592000steps.csv"
 output_path = "processed_datasets/2024-2-16_1915hours"
 
-junctions = [8,7,6,5,4,3]
-windows = [(300,300),(600,300),(900,300),(600,600)]
+junctions = [3,4,5,6,7,8]
+windows = [(900,300),(600,600)]
 SIM_DURATION = 2_592_000
 
 dtype = {
@@ -131,7 +131,7 @@ def get_edges(junctions):
     elif junctions == 7:
         print(f" Number of junctions considered 7")
         incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0","436794669","436942357","-436942356#1","436942362#0","436789580#1","436794670","1051038541#0","-436794679#3"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0","436942356#0","-436942362#3","436789564#0","A-1088637809#1","A436942385#0","A436794679#0"]
+        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0","436942356#0","-436942362#3","436789564#0","-1088637809#1","436942385#0","436794679#0"]
         
     elif junctions == 8:
         print(f" Number of junctions considered 8")
@@ -213,7 +213,7 @@ def generate_processed_dataset(junctions,window_lengths,travel_time_window,df_tr
         df_merged["travel_time"] = df_merged["step_x"] - df_merged["step_y"]
 
         df_travel_time_data = df_merged[["step_x","travel_time"]]
-
+        df_travel_time_data = df_travel_time_data.groupby("step_x").mean().reset_index()
         
         df_travel_time_data2 = pd.merge(left = df_travel_time_data,right = dd_dataframe, right_on='steps',left_on="step_x", how='right')
 
