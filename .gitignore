@@ -10,7 +10,7 @@ runs/
 #XG Boost files
 xgboost/evaluation_proccessed/
 xgboost/experiments/
-xgboost/saved_models/
+city_scale/xgboost/saved_models/
 
 # Processed Datasets
 processed_datasets/
