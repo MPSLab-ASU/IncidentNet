@@ -7,6 +7,11 @@ two_intersections/evaluation_datasets/*.csv
 #Ignoring runs folder of tensorboard
 runs/
 
+#XG Boost files
+xgboost/evaluation_proccessed/
+xgboost/experiments/
+xgboost/saved_models/
+
 # Processed Datasets
 processed_datasets/
 
