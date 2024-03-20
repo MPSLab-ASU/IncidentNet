@@ -21,7 +21,7 @@ processed_datasets/
 saved_models/*.pth
 
 # Ignoring simulation files
-simulation_files/partial_tempe_data
+simulation_files/
 
 # Ignoring processed datasets
 city_scale/CNN_DNN/data
