@@ -28,7 +28,7 @@ def accident_probability_machine(accident_odds,step,last_incident_step):
     
     cars_list = traci.vehicle.getIDList()
     
-    if step - last_incident_step < 7_200:
+    if step - last_incident_step < 200: #TODO#7_200:
         return False
     
     for object in cars_list:
@@ -99,7 +99,7 @@ def resume_speed(slowed_cars,clear_flag):
 
 
 #INCIDENT VARIABLES
-ACCIDENT_ODDS = 900_000 # HIGHER Value means odds of inicident happening is low
+ACCIDENT_ODDS = 10#TODO900_000 # HIGHER Value means odds of inicident happening is low
 NUMBER_OF_INCIDENTS = 100 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
 accident_flag = False
 accident_id = "None"
@@ -120,7 +120,7 @@ incident_count = 0
 incident_lane = -1
 
 #SIMULATION VARIABLES
-SIMULATION_DURATION = 1_296_000#2_592_000
+SIMULATION_DURATION = 1000#1_296_000#2_592_000
 DAY_LENGTH = 86_400
 INCIDENT_HIGHLIGHT_COLOR = (255,0,0)
 SLOWED_CARS_HIGHLIGHT_COLOR = ()
@@ -137,7 +137,7 @@ slowed_cars = set()
 
 # OUTGOING_EDGES = ['533573776#0','5607328#0','519448767','436940270','-436943745#2','436943742','436943774','436943743#0','-436943762#2','436942356#0','-436942362#3','436789564#0','531969915#0','436794679#0','-1088637809#1','436942385#0','-436794676#1','436790495','-1033824750','30031286#0','436942381#0']
 
-junction_sensors = {                            
+tempe_junction_sensors = {                            
             1:["533573776#0","436794680#0","256917837#0","436791498#0","436794701#0","-436794701#3","5607328#0","436791113#0"],
             2:["436794679#0","-436794679#3","436942387#0","436942371#0","-1088637809#1","436794670","436942385#0","1051038541#0"],
             3:["436942349#0","-436942349#3","-403117287#3","403117287#0","-436794676#1","436794669","531969915#0","436942357"],
@@ -148,108 +148,250 @@ junction_sensors = {
             9:["406379332","436943746#0","-436943762#2","436943762#0","436943743#0","436943750#0","436943757#0","-436943757#1"]
             }
 
+chandler_junction_sensors = {                            
+        1:["-436910211#2","436910211#0","436910207#0","-436943495#2","-436910149#2","436910149#0"],
+        2:["436907102#0","-436907102#1","437381373","436907141","-436910134","436910134","-437381365","437381365"],
+        3:["436907103#0","-436907103#3","-436907129#2","436907129#0","-436907104#2","436907104#0","436907132#0","-436907132#1"],
+        4:["-436944203#3","436944203#0","436944199#0","-436944199#2","436944204#0","-436944204#2","-436944198#2","436944198#0"],
+        5:["436945188","-436945188","437376368#0","-437376368#3","-436944196#2","436944196#0","-436945219#3","436945219#0"],
+        6:["436945183#0","-436945183#3","-436945210#2","436945210#0","-436945175#1","436945175#0","436945208#0","-531977178"],
+        7:["436891568#0","436891566#0","436891555#0","-436891555#1","436891570#0","436891571#0","-436891558#1","436891558#0"],
+        8:["529910126#0","436892238#0","436892257#0","-326364342#3","390874842#0","436891553#0","436892256#0","-436892256#2"],
+        9:["436892243#0","436892239#0","-436892250#2","436892250#0","436892245#0","436892240#0","436892251#0","-436892251#1"]
+        }
+
 edges_with_sensors = []
 junctions = []
-for key in junction_sensors.keys():
+for key in chandler_junction_sensors.keys():
     
-    edges_with_sensors = edges_with_sensors + junction_sensors[key]
-    for i in range(len(junction_sensors[key])):
+    edges_with_sensors = edges_with_sensors + chandler_junction_sensors[key]
+    for i in range(len(chandler_junction_sensors[key])):
         junctions.append(key)
 
 print(f"Total number of sensors used in this simulation {len(edges_with_sensors)}")
 print(f"Length of junctions list  {len(junctions)}")
 
 
+# Tempe parital area
+# ACCIDENT_EDGE = ["934465920",
+#                  "5614812#0",
+#                  "889439250",
+#                  "436794672#0",
+#                  "1078715158",
+#                  "532215357#0",
+#                  "436794668#0",
+#                  "436794668#7",
+#                  "436794677#0",
+#                  "436794673#0",
+#                  "1070423862#0",
+#                  "5602753#1",
+#                  "5602753#2",
+#                  "436790493#0",
+#                  "533573789#0",
+#                  "533573789#2",
+#                  "436790492#0",
+#                  "436790484",
+#                  "512811687#0",
+#                  "532227836",
+#                  "532227834#0",
+#                  "436789544#0",
+#                  "436789576#0",
+#                  "436789539#0",
+#                  "436789539#2",
+#                  "436789539#7",
+#                  "436789570#0",
+#                  "436940273#0",
+#                  "692089619#0",
+#                  "692089616#0",
+#                  "692089616#2",
+#                  "436940272#0",
+#                  "436940271#0",
+#                  "5635238",
+#                  "692089613#0",
+#                  "692089613#2",
+#                  "692089613#6",
+#                  "692089611#0",
+#                  "436943721",
+#                  "436943716",
+#                  "436943727#0",
+#                  "406379830#0",
+#                  "436943736",
+#                  "436943731#0",
+#                  "436943728",
+#                  "436943723",
+#                  "436943726",
+#                  "436943720",
+#                  "436943747#0",
+#                  "436943754#0",
+#                  "436943740",
+#                  "436943735",
+#                  "436943729",
+#                  "436943741#0",
+#                  "436943752#0",
+#                  "436791116",
+#                  "436791119#0",
+#                  "436791122#0",
+#                  "436791121#0",
+#                  "436791111",
+#                  "-436789319",
+#                  "395490730",
+#                  "1051025192",
+#                  "512810351#0",
+#                  "436943782",
+#                  "436943780",
+#                  "436943781",
+#                  "436942365#0",
+#                  "436942382#0",
+#                  "436942369#0",
+#                  "436942367",
+#                  "436942384#0",
+#                  "436942364",
+#                  "436942372",
+#                  "395215600",
+#                  "966303717",
+#                  "436942386#0",
+#                  "-436943756#2",
+#                  "-911576955#2",
+#                  "909831620",
+#                  "911576960",
+#                  "-327757100#6",
+#                  "-436942361#7",
+#                  "-436942361#3",
+#                  "-436942361#1",
+#                  "-436942358#5",
+#                  "-436942358#3",
+#                  "-436942358#0",
+#                  "345713658#0"]
 
-ACCIDENT_EDGE = ["934465920",
-                 "5614812#0",
-                 "889439250",
-                 "436794672#0",
-                 "1078715158",
-                 "532215357#0",
-                 "436794668#0",
-                 "436794668#7",
-                 "436794677#0",
-                 "436794673#0",
-                 "1070423862#0",
-                 "5602753#1",
-                 "5602753#2",
-                 "436790493#0",
-                 "533573789#0",
-                 "533573789#2",
-                 "436790492#0",
-                 "436790484",
-                 "512811687#0",
-                 "532227836",
-                 "532227834#0",
-                 "436789544#0",
-                 "436789576#0",
-                 "436789539#0",
-                 "436789539#2",
-                 "436789539#7",
-                 "436789570#0",
-                 "436940273#0",
-                 "692089619#0",
-                 "692089616#0",
-                 "692089616#2",
-                 "436940272#0",
-                 "436940271#0",
-                 "5635238",
-                 "692089613#0",
-                 "692089613#2",
-                 "692089613#6",
-                 "692089611#0",
-                 "436943721",
-                 "436943716",
-                 "436943727#0",
-                 "406379830#0",
-                 "436943736",
-                 "436943731#0",
-                 "436943728",
-                 "436943723",
-                 "436943726",
-                 "436943720",
-                 "436943747#0",
-                 "436943754#0",
-                 "436943740",
-                 "436943735",
-                 "436943729",
-                 "436943741#0",
-                 "436943752#0",
-                 "436791116",
-                 "436791119#0",
-                 "436791122#0",
-                 "436791121#0",
-                 "436791111",
-                 "-436789319",
-                 "395490730",
-                 "1051025192",
-                 "512810351#0",
-                 "436943782",
-                 "436943780",
-                 "436943781",
-                 "436942365#0",
-                 "436942382#0",
-                 "436942369#0",
-                 "436942367",
-                 "436942384#0",
-                 "436942364",
-                 "436942372",
-                 "395215600",
-                 "966303717",
-                 "436942386#0",
-                 "-436943756#2",
-                 "-911576955#2",
-                 "909831620",
-                 "911576960",
-                 "-327757100#6",
-                 "-436942361#7",
-                 "-436942361#3",
-                 "-436942361#1",
-                 "-436942358#5",
-                 "-436942358#3",
-                 "-436942358#0",
-                 "345713658#0"]
+#chandler data
+ACCIDENT_EDGE=[
+            "-402560708#1",
+            "-657132290",
+            "657132294#0",
+            "-5667320#4",
+            "-5667320#2",
+            "436910209#0",
+            "436910139",
+            "436910138#0",
+            "436910137",
+            "436907098#4",
+            "436907105#0",
+            "436907105#2",
+            "676542735#2",
+            "436907101",
+            "436907100#1",
+            "436907099#0",
+            "436907099#5",
+            "436907099#9",
+            "436907099#12",
+            "763528418#18",
+            "763528418#16",
+            "763528418#14",
+            "763528418#13",
+            "763528418#9",
+            "763528418#8",
+            "763528418#5",
+            "763528418#2",
+            "763528418#0",
+            "763528417",
+            "763528419",
+            "402560704#2",
+            "402560704#0",
+            "131637196#0",
+            "972483754#1",
+            "972483754#0",
+            "436945217",
+            "436945218",
+            "436945225#4",
+            "436945225#3",
+            "436945215",
+            "436945216",
+            "436945222#5",
+            "436945222#0",
+            "-436945194#3",
+            "-436945194#5",
+            "-531977179#1",
+            "-531977179#2",
+            "-436945196#1",
+            "-436945211#4",
+            "-436945209#2",
+            "-382549156#1",
+            "-382549156#8",
+            "-382549156#13",
+            "-80396690#10",
+            "-80396690#2",
+            "-80396690#0",
+            "-436944202",
+            "-436944200#1",
+            "167557805",
+            "436944195#1",
+            "436944195#2",
+            "436944195#4",
+            "436944195#10",
+            "436945172#0",
+            "436945191#10",
+            "436945191#11",
+            "436945186#0",
+            "436945179#0",
+            "436945190#1",
+            "436945190#8",
+            "436944197#8",
+            "436944197#7",
+            "436944197#3",
+            "436944197#2",
+            "436944197#1",
+            "436944197#0",
+            "436891554#0",
+            "529686780",
+            "402560703#0",
+            "436891559#0",
+            "436891560#0",
+            "29091769#5",
+            "29091769#2",
+            "436945214",
+            "436892253",
+            "529875459",
+            "131637199#0",
+            "131637197",
+            "326364342#6",
+            "326364342#5",
+            "326364342#4",
+            "-436945212#4",
+            "-436945212#6",
+            "-529886116#1",
+            "-436945213#1",
+            "-436945213#3",
+            "-529886115",
+            "-529886114",
+            "-529886113",
+            "-529886112",
+            "-529886111#2",
+            "-529886111#3",
+            "-436892248#5",
+            "436891565",
+            "221070278#1",
+            "390868417#0",
+            "390868417#2",
+            "390868417#3",
+            "390868417#4",
+            "390868417#6",
+            "390868417#7",
+            "529910125",
+            "436892247#0",
+            "529910123",
+            "529910124#0",
+            "529910124#1",
+            "436892236#0",
+            "529910122#0",
+            "529910122#2",
+            "529910121",
+            "529910120",
+            "436892244#0",
+            "529910118#1",
+            "529910118#0"
+        ]
+
+
 
 # When only distict cars to be recorded
 record_only_distinct_cars = False #Set this variable to be true if you want to record eacch car at an intersection only once
@@ -258,8 +400,8 @@ outgoing_vehicles = []
 
 # CSV write related variables
 time_of_run = datetime.now()
-vehicle_file_name = f"evaluation_datasets/V2_eval_vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
-traffic_file_name = f"evaluation_datasets/V2_eval_trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+vehicle_file_name = f"raw_datasets/V2_chandler_vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+traffic_file_name = f"raw_datasets/V2_chandler_trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 time_file_name = f"time_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 
 traffic_dataset_headers = ['step' ,'time_of_day' ,'identified_edge'  ,'junction_mean_speed'  ,'traffic_count'  ,'traffic_occupancy' ,'vehicles_per_lane_1' ,'vehicles_per_lane_0'  ,'lane_mean_speed_0'  ,'lane_mean_speed_1'  ,'incident_edge'  ,'incident_start_time'  ,'incident_type'  ,'accident_label' ,'accident_id'  ,'accident_duration'  ,"incident_lane", "junction"  ]
@@ -274,7 +416,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
     trafficWriter.writerow(traffic_dataset_headers)
     vehicleWriter.writerow(vehicle_dataset_headers)
 
-    sumo_cmd = ["sumo", "-c", "/home/local/ASURITE/speddira/dev/traffic_sense_net/simulation_files/partial_tempe_data/osm.sumocfg"]
+    sumo_cmd = ["sumo-gui", "-c", r"D:\Dev\traffic_sense_net\simulation_files\partial_chandler_data\osm.sumocfg"]
     print(f"Scale chosen is {scale}")
     traci.start(sumo_cmd)
     traci.simulation.setScale(scale)
@@ -305,7 +447,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
         traci.simulation.setScale(traffic)
 
         # Accident happen ?
-        if(incident_count<NUMBER_OF_INCIDENTS and step > 2000):
+        if(incident_count<NUMBER_OF_INCIDENTS and step > 100):
             accident_flag = False if incident_on_road else accident_probability_machine(ACCIDENT_ODDS,step,incident_start_timestep)
 
         
@@ -492,7 +634,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
                         if abs(min_distance) < 60:
                             traci.vehicle.setColor(car, (180,0,0))
                             # print("Slowed because of less distance")
-                            reduced_speed = 3.5
+                            reduced_speed = 2.9
                             traci.vehicle.setSpeed(car,reduced_speed)
                             slowed_cars.add(car)
 
@@ -501,7 +643,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
                         if abs(min_distance) < 60 or abs(max_distance) < 60:
                             traci.vehicle.setColor(car, (180,0,0))
                             # print("Slowed because of less distance")
-                            reduced_speed = 1.5
+                            reduced_speed = 0.8
                             traci.vehicle.setSpeed(car,reduced_speed)
                             slowed_cars.add(car)
 
