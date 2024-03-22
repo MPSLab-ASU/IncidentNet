@@ -99,7 +99,7 @@ def resume_speed(slowed_cars,clear_flag):
 
 
 #INCIDENT VARIABLES
-ACCIDENT_ODDS = 1_000 # HIGHER Value means odds of inicident happening is low
+ACCIDENT_ODDS = 900_000 # HIGHER Value means odds of inicident happening is low
 NUMBER_OF_INCIDENTS = 800 # Maximum number of incidents you want to limit to for your dataset.Set this to high value, if you don't want to limit it.
 accident_flag = False
 accident_id = "None"
@@ -120,7 +120,7 @@ incident_count = 0
 incident_lane = -1
 
 #SIMULATION VARIABLES
-SIMULATION_DURATION = 3000#2_592_000#1_296_000#
+SIMULATION_DURATION = 2_592_000#1_296_000#
 DAY_LENGTH = 86_400
 INCIDENT_HIGHLIGHT_COLOR = (255,0,0)
 SLOWED_CARS_HIGHLIGHT_COLOR = ()
@@ -136,21 +136,8 @@ slowed_cars = set()
 # INCOMING_EDGES = ['436794670','436791113#0','436794680#0','436940278','-643913497','436943745#0','351673438','-613687451#1','436943750#0','436943762#0','-436942356#1','436942362#0','436789580#1','436942357','436794669','1051038541#0','-436794679#3','533371302#0','436942374','436790491','-436942381#3']
 
 # OUTGOING_EDGES = ['533573776#0','5607328#0','519448767','436940270','-436943745#2','436943742','436943774','436943743#0','-436943762#2','436942356#0','-436942362#3','436789564#0','531969915#0','436794679#0','-1088637809#1','436942385#0','-436794676#1','436790495','-1033824750','30031286#0','436942381#0']
-# TIMER Variables
-timer_dict = { "initial_setup":0,
-              "simulation_run":0,
-              "traffic_scale":0,
-              "accident_probability":0,
-              "sensor_data":0,
-              "accident_setting":0,
-              "slowing_cars":0,
-              "incident_clearance":0,
-              "run_step":0
-    
-}
 
 
-t1 = time.time()
 tempe_junction_sensors = {                            
             1:["533573776#0","436794680#0","256917837#0","436791498#0","436794701#0","-436794701#3","5607328#0","436791113#0"],
             2:["436794679#0","-436794679#3","436942387#0","436942371#0","-1088637809#1","436794670","436942385#0","1051038541#0"],
@@ -174,237 +161,46 @@ chandler_junction_sensors = {
         9:["436892243#0","436892239#0","-436892250#2","436892250#0","436892245#0","436892240#0","436892251#0","-436892251#1"]
         }
 
+mesa_junction_sensors = {                            
+        1:["436942349#0","-436942349#3","531969915#0","436942357"],
+        2:["575185591","241136277#0","532236938#0","436928238#0","34080726#0","575185589","527861158"],
+        3:["77306296#0","-77306296#2","-436947421#2","436947421#0"],
+        4:["422264711#0","422264712#0","-436942362#3","436942362#0","436942356#0","-436942356#1"],
+        5:["436928222","436928210#0","437365433","436929568#0","402267747","402267742#0","402267743#0","32941363#0"],
+        6:["436947437#0","330072058#0","436947426#0","329784646#0","436947428#0","329784636#0"],
+        7:["-436943762#2","436943762#0","406379332","436943746#0"],
+        8:["351673433","436929545#0","436929570#0","396134425#0","532227812","436929571#0","123445155"],
+        9:["436949412#0","532215038#0","542529185#0","436949416#0"]
+        }
+
 edges_with_sensors = []
 junctions = []
-for key in chandler_junction_sensors.keys():
+for key in mesa_junction_sensors.keys():
     
-    edges_with_sensors = edges_with_sensors + chandler_junction_sensors[key]
-    for i in range(len(chandler_junction_sensors[key])):
+    edges_with_sensors = edges_with_sensors + mesa_junction_sensors[key]
+    for i in range(len(mesa_junction_sensors[key])):
         junctions.append(key)
 
 print(f"Total number of sensors used in this simulation {len(edges_with_sensors)}")
 print(f"Length of junctions list  {len(junctions)}")
 
 
-# Tempe parital area
-# ACCIDENT_EDGE = ["934465920",
-#                  "5614812#0",
-#                  "889439250",
-#                  "436794672#0",
-#                  "1078715158",
-#                  "532215357#0",
-#                  "436794668#0",
-#                  "436794668#7",
-#                  "436794677#0",
-#                  "436794673#0",
-#                  "1070423862#0",
-#                  "5602753#1",
-#                  "5602753#2",
-#                  "436790493#0",
-#                  "533573789#0",
-#                  "533573789#2",
-#                  "436790492#0",
-#                  "436790484",
-#                  "512811687#0",
-#                  "532227836",
-#                  "532227834#0",
-#                  "436789544#0",
-#                  "436789576#0",
-#                  "436789539#0",
-#                  "436789539#2",
-#                  "436789539#7",
-#                  "436789570#0",
-#                  "436940273#0",
-#                  "692089619#0",
-#                  "692089616#0",
-#                  "692089616#2",
-#                  "436940272#0",
-#                  "436940271#0",
-#                  "5635238",
-#                  "692089613#0",
-#                  "692089613#2",
-#                  "692089613#6",
-#                  "692089611#0",
-#                  "436943721",
-#                  "436943716",
-#                  "436943727#0",
-#                  "406379830#0",
-#                  "436943736",
-#                  "436943731#0",
-#                  "436943728",
-#                  "436943723",
-#                  "436943726",
-#                  "436943720",
-#                  "436943747#0",
-#                  "436943754#0",
-#                  "436943740",
-#                  "436943735",
-#                  "436943729",
-#                  "436943741#0",
-#                  "436943752#0",
-#                  "436791116",
-#                  "436791119#0",
-#                  "436791122#0",
-#                  "436791121#0",
-#                  "436791111",
-#                  "-436789319",
-#                  "395490730",
-#                  "1051025192",
-#                  "512810351#0",
-#                  "436943782",
-#                  "436943780",
-#                  "436943781",
-#                  "436942365#0",
-#                  "436942382#0",
-#                  "436942369#0",
-#                  "436942367",
-#                  "436942384#0",
-#                  "436942364",
-#                  "436942372",
-#                  "395215600",
-#                  "966303717",
-#                  "436942386#0",
-#                  "-436943756#2",
-#                  "-911576955#2",
-#                  "909831620",
-#                  "911576960",
-#                  "-327757100#6",
-#                  "-436942361#7",
-#                  "-436942361#3",
-#                  "-436942361#1",
-#                  "-436942358#5",
-#                  "-436942358#3",
-#                  "-436942358#0",
-#                  "345713658#0"]
-
-#chandler data
-ACCIDENT_EDGE=[
-            "-402560708#1",
-            "-657132290",
-            "657132294#0",
-            "-5667320#4",
-            "-5667320#2",
-            "436910209#0",
-            "436910139",
-            "436910138#0",
-            "436910137",
-            "436907098#4",
-            "436907105#0",
-            "436907105#2",
-            "676542735#2",
-            "436907101",
-            "436907100#1",
-            "436907099#0",
-            "436907099#5",
-            "436907099#9",
-            "436907099#12",
-            "763528418#18",
-            "763528418#16",
-            "763528418#14",
-            "763528418#13",
-            "763528418#9",
-            "763528418#8",
-            "763528418#5",
-            "763528418#2",
-            "763528418#0",
-            "763528417",
-            "763528419",
-            "402560704#2",
-            "402560704#0",
-            "131637196#0",
-            "972483754#1",
-            "972483754#0",
-            "436945217",
-            "436945218",
-            "436945225#4",
-            "436945225#3",
-            "436945215",
-            "436945216",
-            "436945222#5",
-            "436945222#0",
-            "-436945194#3",
-            "-436945194#5",
-            "-531977179#1",
-            "-531977179#2",
-            "-436945196#1",
-            "-436945211#4",
-            "-436945209#2",
-            "-382549156#1",
-            "-382549156#8",
-            "-382549156#13",
-            "-80396690#10",
-            "-80396690#2",
-            "-80396690#0",
-            "-436944202",
-            "-436944200#1",
-            "167557805",
-            "436944195#1",
-            "436944195#2",
-            "436944195#4",
-            "436944195#10",
-            "436945172#0",
-            "436945191#10",
-            "436945191#11",
-            "436945186#0",
-            "436945179#0",
-            "436945190#1",
-            "436945190#8",
-            "436944197#8",
-            "436944197#7",
-            "436944197#3",
-            "436944197#2",
-            "436944197#1",
-            "436944197#0",
-            "436891554#0",
-            "529686780",
-            "402560703#0",
-            "436891559#0",
-            "436891560#0",
-            "29091769#5",
-            "29091769#2",
-            "436945214",
-            "436892253",
-            "529875459",
-            "131637199#0",
-            "131637197",
-            "326364342#6",
-            "326364342#5",
-            "326364342#4",
-            "-436945212#4",
-            "-436945212#6",
-            "-529886116#1",
-            "-436945213#1",
-            "-436945213#3",
-            "-529886115",
-            "-529886114",
-            "-529886113",
-            "-529886112",
-            "-529886111#2",
-            "-529886111#3",
-            "-436892248#5",
-            "436891565",
-            "221070278#1",
-            "390868417#0",
-            "390868417#2",
-            "390868417#3",
-            "390868417#4",
-            "390868417#6",
-            "390868417#7",
-            "529910125",
-            "436892247#0",
-            "529910123",
-            "529910124#0",
-            "529910124#1",
-            "436892236#0",
-            "529910122#0",
-            "529910122#2",
-            "529910121",
-            "529910120",
-            "436892244#0",
-            "529910118#1",
-            "529910118#0"
-        ]
-
+accident_edges = {
+        "0":["528032610"],
+        "1":["402556246#0","402556246#3","402556246#6","402556246#10","436928232#0","436928235#0","436928236#1","436928236#3","436928236#6","436928236#7"],
+        "2":["532215354#0","532215355","436947420#0","436947420#1","436947420#2","436947420#6","436947419#0","436947418#0","241136279#0","241136279#5"],
+        "3":["436942354","345713658#1","345713658#0","-436942358#0","-436942358#3","-436942358#5","-436942353#1","-436942361#3","-436942361#7"],
+        "4":["32941363#5","32941363#4","32941363#3","32941363#2"],
+        "5":["532222483#0","329784634#9","329784634#8","329784634#6","329784634#4","329784634#3","329784634#1","329784634#0","532222482#0"],
+        "6":["316291313#0","436928217#0","316292325#0","436928218#0","436928224#0"],
+        "7":["437365407","30030715#0","436928215","436928220#0","436947474#0","436947436#0","34339195#0"],
+        "8":["-327757100#6","911576960","909831620","-911576955#2"],
+        "9":["532240700","605746860#1","437362484"],
+        "10":["1055608578","544520924#0","532225531#2","532226065#0","532226064#0"],
+        "11":["436929551#0","436929524#0","436929538#0","436929502#0","436929559#0","436929541#0","436929501#0"],
+        "12":["605410547#1","532213973#0","532213971","532214584#0","532214583#0","396135767#0"]
+    
+    }
 
 
 # When only distict cars to be recorded
@@ -414,16 +210,14 @@ outgoing_vehicles = []
 
 # CSV write related variables
 time_of_run = datetime.now()
-vehicle_file_name = f"raw_datasets/V2_chandler_vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
-traffic_file_name = f"raw_datasets/V2_chandler_trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+
+vehicle_file_name = f"/home/local/ASURITE/speddira/dev/traffic_sense_net/city_scale/raw_datasets/mesa_vehicleDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
+traffic_file_name = f"/home/local/ASURITE/speddira/dev/traffic_sense_net/city_scale/raw_datasets/mesa_trafficDataset_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 time_file_name = f"time_{time_of_run.year}-{time_of_run.month}-{time_of_run.day}_{time_of_run.hour}{time_of_run.minute}hours_{SIMULATION_DURATION}steps.csv"
 
 traffic_dataset_headers = ['step' ,'time_of_day' ,'identified_edge'  ,'junction_mean_speed'  ,'traffic_count'  ,'traffic_occupancy' ,'vehicles_per_lane_1' ,'vehicles_per_lane_0'  ,'lane_mean_speed_0'  ,'lane_mean_speed_1'  ,'incident_edge'  ,'incident_start_time'  ,'incident_type'  ,'accident_label' ,'accident_id'  ,'accident_duration'  ,"incident_lane", "junction"  ]
 vehicle_dataset_headers = ['step','time_of_day','car_id','identified_edge','identified_lane','vehicle_speed','vehicle_acceleration','junction']
 
-t2 = time.time()
-
-timer_dict["initial_setup"] = t2-t1
 
 
 with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 'w', newline='') as file2:
@@ -434,13 +228,13 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
     trafficWriter.writerow(traffic_dataset_headers)
     vehicleWriter.writerow(vehicle_dataset_headers)
 
-    sumo_cmd = ["sumo", "-c", "/home/local/ASURITE/speddira/dev/traffic_sense_net/simulation_files/partial_chandler_data/osm.sumocfg"]
-    # sumo_cmd = ["sumo", "-c", "/home/local/ASURITE/speddira/dev/archived/traffic_sense_net/simulation_files/partial_tempe_data/osm.sumocfg"]
+    sumo_cmd = ["sumo", "-c", "/home/local/ASURITE/speddira/dev/traffic_sense_net/simulation_files/parital_mesa_data/osm.sumocfg"]
+
     print(f"Scale chosen is {scale}")
     traci.start(sumo_cmd)
     traci.simulation.setScale(scale)
     start_time = time.time()
-
+    print(f"Simulated starting for {SIMULATION_DURATION} steps")
     while step < SIMULATION_DURATION:
         
 
@@ -463,23 +257,13 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
 
 
         # Scaling traffic
-        t3 = time.time()
+
         traffic = 2.2+1*(math.sin(2*pi*step/DAY_LENGTH))
         traci.simulation.setScale(traffic)
-        t4 = time.time()
-        timer_dict["traffic_scale"] = timer_dict["traffic_scale"] + (t4-t3)
         
-        
-        # Accident happen ?
-        t5 = time.time()
-        if(incident_count<NUMBER_OF_INCIDENTS and step > 1000):
+        if(incident_count<NUMBER_OF_INCIDENTS and step > 10):
             accident_flag = False if incident_on_road else accident_probability_machine(ACCIDENT_ODDS,step,incident_start_timestep)
             
-        t6 = time.time()
-        timer_dict["accident_probability"] = timer_dict["accident_probability"] + (t6-t5)
-
-        
-        t7 = time.time()
         for edge,junction_num in zip(edges_with_sensors,junctions):
             traffic_row = []
             traffic_row.append(step) # index : 0 ; step of simultation
@@ -562,15 +346,12 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
                     
             trafficWriter.writerow(traffic_row)
 
-        t8 = time.time()
-        timer_dict["sensor_data"] = timer_dict["sensor_data"] + (t8-t7)
-
-        t9 = time.time()
         if (accident_flag):
-
+            print("flag raised")
             # INCIDENT HAPPENED
-            random_edge_selection = random.sample(ACCIDENT_EDGE, 1) #Randomly choose one accident edge
-            incident_edge = random_edge_selection[0]
+            random_key_selection = random.sample(list(accident_edges.keys()), 1) #Randomly choose one accident edge
+            incident_key = random_key_selection[0]
+            incident_edge = random.sample(accident_edges[incident_key], 1)[0]
             carsList = traci.edge.getLastStepVehicleIDs(incident_edge) #Get list of cars in that edge
 
             if len(carsList) != 0:
@@ -647,13 +428,7 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
 
                 accident_id = f"acc{step}"
                 print(f"{incident_type} Incident Duration Clearance after {incident_duration_choice}")
-        t10 = time.time()
-        timer_dict["accident_setting"] = timer_dict["accident_setting"] + (t10-t9)
-        
-        
-        t11 = time.time()
-        
-        
+
         if(incident_on_road):
 
             #People should drive slow and carefully when there is an incident on road
@@ -683,11 +458,6 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
             if len(slowed_cars) != 0:
                 slowed_cars = resume_speed(slowed_cars,False)
 
-        t12 = time.time()
-        
-        timer_dict["slowing_cars"] = timer_dict["slowing_cars"] + (t12-t11)
-        
-        t13=time.time()
         if (incident_on_road) and (step - incident_start_timestep > incident_duration_choice):
             print("Entered this blovk")
             '''
@@ -707,14 +477,9 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
             incident_lane = -1
 
         step+=1
-        t14 = time.time()
-        
-        timer_dict["incident_clearance"] = timer_dict["incident_clearance"] + (t14-t13)
-        t15=time.time()
+
         traci.simulationStep()
-        t16=time.time()
-        
-        timer_dict["run_step"] = timer_dict["run_step"] + (t16-t15)
+
 
 
     traci.close()
@@ -724,8 +489,5 @@ with open(traffic_file_name, 'w', newline='') as file1, open(vehicle_file_name, 
 # time_df = pd.DataFrame(time_capture_list)
 end_time = int(time.time())
 
-timer_dict["simulation_run"] = end_time-start_time
 # time_df.to_csv(f"{time_file_name}.csv")
 print(f"Finished successfully in {end_time - start_time}")
-
-print(timer_dict)
