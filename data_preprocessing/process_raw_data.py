@@ -1,7 +1,7 @@
 import pandas as pd
 
-TRAFFIC_DATASET_PATH = "/home/local/ASURITE/speddira/dev/archived/traffic_sense_net/city_scale/raw_datasets/trafficDataset_2024-2-16_1915hours_2592000steps.csv"
-VEHICLE_DATASET_PATH = "/home/local/ASURITE/speddira/dev/archived/traffic_sense_net/city_scale/raw_datasets/vehicleDataset_2024-2-16_1915hours_2592000steps.csv"
+TRAFFIC_DATASET_PATH = "traffic_path.csv"
+VEHICLE_DATASET_PATH = "vehicle_path.csv"
 output_path = "processed_datasets/2024-2-16_1915hours"
 
 junctions = [3,4,5,6,7,8]
