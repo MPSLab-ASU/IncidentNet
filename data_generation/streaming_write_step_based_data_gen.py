@@ -138,7 +138,9 @@ def resume_speed(slowed_cars, clear_flag):
     return slowed_cars_list
 
 def get_edge_ids():
-
+    """
+    Load the id of edges of the experiment region
+    """
     data = json.load("simulation_network_ids.json")
 
     edges_with_sensors = []
@@ -151,6 +153,9 @@ def get_edge_ids():
     return edges_with_sensors,accident_edge
 
 def generate_data():
+    """
+    Runs the simulation and generates the raw data to csv file
+    """
     # INCIDENT VARIABLES
 
     edges_with_sensors,ACCIDENT_EDGE = get_edge_ids()
@@ -209,7 +214,7 @@ def generate_data():
         sumo_cmd = [
             "sumo",
             "-c",
-            "/home/local/ASURITE/speddira/dev/traffic_sense_net/simulation_files/partial_tempe_data/osm.sumocfg",
+            "osm.sumocfg",
         ]
         traci.start(sumo_cmd, port=9999)
         traci.simulation.setScale(scale)
