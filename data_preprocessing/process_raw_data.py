@@ -1,156 +1,75 @@
 import pandas as pd
+import json
 
-TRAFFIC_DATASET_PATH = "traffic_path.csv"
-VEHICLE_DATASET_PATH = "vehicle_path.csv"
-output_path = "processed_datasets/2024-2-16_1915hours"
+def get_sensors_details(junctions):
 
-junctions = [3,4,5,6,7,8]
-windows = [(900,300),(600,600)]
-SIM_DURATION = 2_592_000
+    """
+    Load the id of edges, id of individual sensors and combination of sensor placement of the experiment 
+    region for the given number of junctions with sensors
+    """
+    data = json.load("sensor_placement_ids.json")
 
-dtype = {
-    'step' : 'int64',
-    'time_of_day' : 'int64',
-    'identified_edge' : 'object',
-    'junction_mean_speed' : 'float64',
-    'traffic_count' : 'float64',
-    'traffic_occupancy' : 'float64',
-    'vehicles_per_lane_1' : 'int64',
-    'vehicles_per_lane_0' : 'int64',
-    'lane_mean_speed_0' : 'float64',
-    'lane_mean_speed_1' : 'float64',
-    'incident_edge': 'object',
-    'incident_start_time': 'float64',
-    'incident_type': 'object',
-    'accident_label': 'bool',
-    'accident_id': 'object',
-    'accident_duration': 'float64',
-    'incident_lane': 'object'
-}
-print("Reading Traffic Dataset")
-df_traffic_raw = pd.read_csv(TRAFFIC_DATASET_PATH,dtype=dtype)
-
-dtype = {
-'step':'int64',
-'time_of_day':'int64',
-'car_id':'object',
-'identified_edge':'object',
-'identified_lane':'float64',
-'junction_mean_speed':'float64',
-'vehicle_speed':'float64',
-'vehicle_acceleration':'float64'
-}
-print("Reading vehicle Dataset")
-df_vehicle = pd.read_csv(VEHICLE_DATASET_PATH,dtype=dtype)
-
-SENSORS = {
-
-    1: "5607328#0",
-    2:"436791113#0",
-    3:"533573776#0",
-    4:"436794680#0",
-    5:"436794670",
-    6:"436942385#0",
-    7:"1051038541#0",
-    8:"436794679#0",
-    9:"-436794679#3",
-    10:"-1088637809#1",
-    11:"436794669",
-    12:"531969915#0",
-    13:"436942357",
-    14:"-436794676#1",
-    15:"436790495",
-    16:"533371302#0",
-    17:"-1033824750",
-    18:"436942374",
-    19:"30031286#0",
-    20:"436790491",
-    21:"436942381#0",
-    22:"-436942381#3",
-    23:"436789580#1",
-    24:"436942356#0",
-    25:"-436942356#1",
-    26:"-436942362#3",
-    27:"436942362#0",
-    28:"436789564#0",
-    29:"436940278",
-    30:"436940270",
-    31:"-643913497",
-    32:"519448767",
-    33:"436943745#0",
-    34:"436943742",
-    35:"351673438",
-    36:"436943774",
-    37:"-613687451#1",
-    38:"-436943745#2",
-    39:"436943750#0",
-    40:"-436943762#2",
-    41:"436943762#0",
-    42:"436943743#0"
-
-}
-
-junctions_sensor_combo ={
-
-    3:[[3,22],[21,4],[1,16],[15,2],[40,20],[19,41],[42,18],[17,39],[3,41],[42,2],[1,39],[40,4]],
-
-    4:[[3,22],[21,4],[1,16],[15,2],[40,20],[19,41],[42,18],[17,39],[3,41],[42,31],[30,39],[40,4],[32,2],[1,29],[32,16],[15,29],[30,18],[17,31]],
-    
-    5:[[3,11],[14,4],[30,39],[42,31],[32,2],[1,29],[40,13],[12,41],[3,22],[14,22],[21,4],[21,11],[1,16],[15,2],[19,13],[12,20],[32,16],[15,29],[30,18],[17,31],[17,39],[42,18],[19,41],[40,20]],
-
-    6:[[3,11],[14,4],[30,39],[42,31],[32,2],[1,29],[26,13],[12,27],[40,25],[24,41],[3,22],[14,22],[21,4],[21,11],[1,16],[15,2],[19,23],[28,20],[32,16],[15,29],[30,18],[17,31],[17,39],[42,18]],
-
-    7:[[3,5],[10,4],[8,11],[14,9],[30,39],[42,31],[32,2],[1,29],[26,13],[12,27],[40,25],[24,41],[6,22],[21,7],[1,16],[15,2],[19,23],[28,20],[32,16],[15,29],[30,18],[17,31],[17,39],[42,18]],
-
-    8:[[3,5],[10,4],[8,11],[14,9],[30,33],[38,31],[34,39],[42,35],[32,2],[1,29],[26,13],[12,27],[40,25],[24,41],[6,22],[21,7],[1,16],[15,2],[19,23],[28,20],[32,16],[15,29],[36,18],[17,37]]
-
-}
-
-def get_edges(junctions):
-    
-    if junctions == 3:
-        print(f" Number of junctions considered 3")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","436943762#0"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2"]
-        
-    elif junctions == 4:
-        print(f" Number of junctions considered 4")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767"]
-        
-    elif junctions == 5:
-        print(f" Number of junctions considered 5")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0","436794669","436942357"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0"]
-        
-    elif junctions == 6:
-        print(f" Number of junctions considered 6")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0","436794669","436942357","-436942356#1","436942362#0","436789580#1"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0","436942356#0","-436942362#3","436789564#0"]
-        
-    elif junctions == 7:
-        print(f" Number of junctions considered 7")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0","436794669","436942357","-436942356#1","436942362#0","436789580#1","436794670","1051038541#0","-436794679#3"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0","436942356#0","-436942362#3","436789564#0","-1088637809#1","436942385#0","436794679#0"]
-        
-    elif junctions == 8:
-        print(f" Number of junctions considered 8")
-        incoming_edges = ["436794680#0","436791113#0","-436942381#3","533371302#0","436942374","436790491","436943750#0","-643913497","436940278","436943762#0","436794669","436942357","-436942356#1","436942362#0","436789580#1","436794670","1051038541#0","-436794679#3","436943745#0","351673438","-613687451#1"]
-        outgoing_edges = ["533573776#0","5607328#0","436942381#0","436790495","-1033824750","30031286#0","436943743#0","-436943762#2","436940270","519448767","-436794676#1","531969915#0","436942356#0","-436942362#3","436789564#0","-1088637809#1","436942385#0","436794679#0","-436943745#2","436943742","436943774"]
-        
-
+    if junctions > 8:
+        print("Incorrect value entered for junctions with sensors")
+        ids = []
+        junctions_sensor_combo = []
     else:
-        print("Incorrect junction value, terminating iteration")
-        return [],[]
-    
-    return incoming_edges,outgoing_edges
-    
+        ids = data["sensor_pacement_ids"][str(junctions)]
+        junctions_sensor_combo = data["junctions_sensor_combo"][str(junctions)]
 
-def generate_processed_dataset(junctions,window_lengths,travel_time_window,df_traffic,sensors,junctions_sensor_combo,sim_duaration,output_path):
+    return ids,data["SENSORS"],junctions_sensor_combo
     
-    incoming_edges,outgoing_edges = get_edges(junctions)
-    edges = incoming_edges+outgoing_edges
+def read_raw_data(traffic_raw_data,vehicle_raw_data):
+
+    '''
+    Read raw datasets
+    '''
+
+    dtype = {
+        'step' : 'int64',
+        'time_of_day' : 'int64',
+        'identified_edge' : 'object',
+        'junction_mean_speed' : 'float64',
+        'traffic_count' : 'float64',
+        'traffic_occupancy' : 'float64',
+        'vehicles_per_lane_1' : 'int64',
+        'vehicles_per_lane_0' : 'int64',
+        'lane_mean_speed_0' : 'float64',
+        'lane_mean_speed_1' : 'float64',
+        'incident_edge': 'object',
+        'incident_start_time': 'float64',
+        'incident_type': 'object',
+        'accident_label': 'bool',
+        'accident_id': 'object',
+        'accident_duration': 'float64',
+        'incident_lane': 'object'
+    }
+    print("Reading Traffic Dataset")
+    df_traffic_raw = pd.read_csv(traffic_raw_data,dtype=dtype)
+
+    dtype = {
+    'step':'int64',
+    'time_of_day':'int64',
+    'car_id':'object',
+    'identified_edge':'object',
+    'identified_lane':'float64',
+    'junction_mean_speed':'float64',
+    'vehicle_speed':'float64',
+    'vehicle_acceleration':'float64'
+    }
+    print("Reading vehicle Dataset")
+    df_vehicle = pd.read_csv(vehicle_raw_data,dtype=dtype)
+
+    return df_traffic_raw,df_vehicle
+
+
+def generate_processed_dataset(traffic_raw_data,vehicle_raw_data,junctions,window_lengths,travel_time_window,sim_duaration):
     
+    OUTPUT_PATH = "processed_dataset"
+
+    edges,sensors,junctions_sensor_combo = get_sensors_details(junctions)
+    
+    df_traffic,df_vehicle = read_raw_data(traffic_raw_data,vehicle_raw_data)
     count = 0
     df = df_traffic[df_traffic["identified_edge"] == edges[0] ]
     df = df.reset_index(drop=True)
@@ -225,16 +144,5 @@ def generate_processed_dataset(junctions,window_lengths,travel_time_window,df_tr
         count+=1
         
     print("Writing to csv")
-    df_traffic_data.to_csv(f"{output_path}_{junctions}jun_{window_lengths}_win_{travel_time_window}twin.csv")
-    
-for junction in junctions:
-    print(f"Generating data for junction {junction}")
-    for combo in windows:
-
-        window_lengths,travel_time_window = combo
-        
-        print(f"\tGenerating data for combo {window_lengths} & {travel_time_window}")
-        generate_processed_dataset(junction,window_lengths,travel_time_window,df_traffic_raw,SENSORS,junctions_sensor_combo,SIM_DURATION,output_path)
-        
-        
-print("Finished Successfully")
+    df_traffic_data.to_csv(f"{OUTPUT_PATH}_{junctions}jun_{window_lengths}_win_{travel_time_window}twin.csv")
+    print("Finished Successfully")
