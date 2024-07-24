@@ -63,7 +63,7 @@ def read_raw_data(traffic_raw_data,vehicle_raw_data):
     return df_traffic_raw,df_vehicle
 
 
-def generate_processed_dataset(traffic_raw_data,vehicle_raw_data,junctions,window_lengths,travel_time_window,sim_duaration):
+def process_raw_data(traffic_raw_data,vehicle_raw_data,junctions,window_lengths,travel_time_window,sim_duaration):
     
     OUTPUT_PATH = "processed_dataset"
 
@@ -143,6 +143,6 @@ def generate_processed_dataset(traffic_raw_data,vehicle_raw_data,junctions,windo
         df_traffic_data = df_traffic_data.drop(["steps"],axis=1)
         count+=1
         
-    print("Writing to csv")
+    print("Writing processed data to csv")
     df_traffic_data.to_csv(f"{OUTPUT_PATH}_{junctions}jun_{window_lengths}_win_{travel_time_window}twin.csv")
     print("Finished Successfully")
