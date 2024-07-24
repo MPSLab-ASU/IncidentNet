@@ -64,8 +64,7 @@ def accident_probability_machine(accident_odds, step, last_incident_step):
     This function is a probability machine which rolls a die and if the die happens to match a particular number , accident flag is set to true.
     But before that we ensure multiple incidents do not happen in same day (line no 23) and time difference between two incidents is atleast
     5000 seconds.
-    """
-
+    """ 
     cars_list = traci.vehicle.getIDList()
 
     if step - last_incident_step < 7_800:
@@ -152,7 +151,7 @@ def get_edge_ids():
 
     return edges_with_sensors,accident_edge
 
-def generate_data():
+def streaming_write_step_based_data_gen():
     """
     Runs the simulation and generates the raw data to csv file
     """
@@ -471,6 +470,3 @@ def generate_data():
     print(f"Finished successfully in {end_time - start_time}")
     now = datetime.now()
     print("Completed at: ", now.strftime("%Y-%m-%d %H:%M:%S"))
-
-
-generate_data() # Entry point 
