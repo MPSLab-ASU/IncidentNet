@@ -1,7 +1,9 @@
 import pandas as pd
-import sys
 
-def main(path):
+def incident_data_analysis(path):
+    """
+    Reads processed dataset and logs the summary of the incident data
+    """
     df = pd.read_csv(path)
 
 
@@ -19,5 +21,3 @@ def main(path):
     print(f"Max accident clearence time {df_mild['accident_duration'].max()}")
     print(f"Min accident clearence time {df_mild['accident_duration'].min()}")
     print(f"Median accident clearence time {df_mild['accident_duration'].median()}")
-
-main(sys.argv[0])
