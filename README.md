@@ -15,8 +15,8 @@
 ###  Raw Data Generation
 -   The next step is to run the simulation and generate raw datasets.
 -   **streaming_write_step_based_data_gen.py** runs the simulation, simulates incidents and writes the data to csv. It outputs two csv files.
-        > raw_traffic_data.csv stores traffic data measured by sensors near the junctions at every second.
-        > raw_vehicle_data.csv stores vehicle data including speed , id , lane observed.
+        - raw_traffic_data.csv stores traffic data measured by sensors near the junctions at every second.
+        - raw_vehicle_data.csv stores vehicle data including speed , id , lane observed.
 -   Before you run the above, edit the values of simulation duration, accident odds(the likelyhood of incident happening), number of incidents.
 -   Using curve fitting method, fit a curve to the real world macroscopic traffic data taken from **department of transportation websites** for the experimental region. Use this equation (scaled down if required) as function to vary simulation scale.
 -   This code also requires a **simulation_network_ids.json**. This json contains edge ids of the experimental area taken from the generated network file. Netedit can also be used to retrieve the id values of the edges.
