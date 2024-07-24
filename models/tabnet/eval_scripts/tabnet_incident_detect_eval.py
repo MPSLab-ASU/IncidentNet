@@ -21,7 +21,10 @@ from tqdm import tqdm
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-def incident_detection_eval(prediction_rate,X,Y,xgb_model_loaded,junction):
+def standardize(col):
+   return (col - col.mean()) / col.std()
+
+def evaluate(prediction_rate,X,Y,model):
     history = [0]  # Assuming no incident at start
     incident_counter = 0
     detected_counter = 0
@@ -37,7 +40,7 @@ def incident_detection_eval(prediction_rate,X,Y,xgb_model_loaded,junction):
         if counter% prediction_rate == 0:
             
             predictions_count+=1
-            predicted = xgb_model_loaded.predict([row])[0] 
+            predicted = model.predict([row])[0] 
             # print(predicted)
             
             if len(history) > 0:
@@ -81,74 +84,40 @@ def incident_detection_eval(prediction_rate,X,Y,xgb_model_loaded,junction):
         
     false_alarm_rate = 100*false_alarm_counter/predictions_count
     arr = np.array(detection_times)
-    row = {
-             "junctions" : junction,
-            "prediction_rate" : prediction_rate, 
-           "incident_counter": incident_counter,
-           "detected_counter":detected_counter,
-           "mttd":arr.mean(),
-           "false_alarm_counter":false_alarm_counter,
-           "false_alarm_rate": false_alarm_rate,
-           "predictions_count":predictions_count
-        
-    }    
-    return row
+    accuracy = detected_counter/incident_counter * 100
+    mttd = arr.mean()
+
+    return accuracy,false_alarm_rate,mttd
 
 
-model_path = "/home/local/ASURITE/speddira/dev/traffic_sense_net/city_scale/wild_models/saved_models/tab_net_8_jun.zip"
-loaded_clf = TabNetClassifier()
-loaded_clf.load_model(model_path)
+def tabnet_incident_detect_eval(dataset_path,model_path):
+    """
+    Entry point
+    """
 
-df = pd.read_csv("/home/local/ASURITE/speddira/dev/traffic_sense_net/city_scale/processed_datasets/2024-2-16_1915hours_8jun_600_win_600twin.csv")
+    
+    loaded_clf = TabNetClassifier()
+    loaded_clf.load_model(model_path)
 
-df_eval =df.drop(["Unnamed: 0", "step"],axis=1)
+    data_types = {
+            'incident_edge': 'object',  # Replace 'Column_Name1' with the actual column name
+            'incident_lane': 'object'  # Replace 'Column_Name2' with the actual column name
+        }
 
-def standardize(col):
-   return (col - col.mean()) / col.std()
+    df = pd.read_csv(dataset_path,dtype=data_types)
 
+    df_eval =df.drop(["Unnamed: 0", "step"],axis=1)
 
-# IF detecting incidents
-df_eval = df_eval[600:]
-df_eval =df_eval.fillna(-1)
+    df_eval = df_eval[600:]
+    df_eval =df_eval.fillna(-1)
 
-Y = df_eval["accident_label"]
+    Y = df["accident_label"]      
+    X = df.drop(["Unnamed: 0","step","incident_edge","incident_start_time","incident_type","accident_id","accident_duration","incident_lane","accident_label"],axis=1)
+    X = X.apply(standardize)
 
-X = df_eval.drop(["incident_edge","incident_start_time","incident_type","accident_id","accident_duration","incident_lane","accident_label"],axis=1)
-X = X.apply(standardize)
+    X= X.values
+    Y= Y.values
 
-X= X.values
-Y= Y.values
+    #In reality we run prediction every 1 minute and when an incident flag is raised and detected we have a cooling period after incident clearance
 
-X.shape
-
-# Direct Evaluation - but in reality we run prediction every 1 minute and when an incident flag is raised and detected we have a cooling period after incident clearance
-y_pred = loaded_clf.predict(X)
-y_pred = list(y_pred)
-y_test = list(Y)
-
-accuracy = accuracy_score(y_test, y_pred)*100
-precision = precision_score(y_test, y_pred)
-f1 = f1_score(y_test, y_pred)
-recall = recall_score(y_test, y_pred)
-print("Accuracy: %.2f%%" % (accuracy))
-print(f"FAR {100-accuracy}")
-print("precision: %.2f%%" % (precision * 100.0))
-print("f1: %.2f%%" % (f1 * 100.0))
-print("recall: %.2f%%" % (recall * 100.0))
-
-junction = 4
-print(evaluate(30,X,Y,loaded_clf,junction))
-
-from sklearn.metrics import roc_auc_score
-
-# Assuming you have true labels (y_true) and predicted labels (y_pred)
-auc_score = roc_auc_score(y_test, y_pred)
-print("auc_score: %.2f%%" % (auc_score * 100.0))
-
-from sklearn.metrics import confusion_matrix
-import seaborn as sn
-import matplotlib.pyplot as plt
-
-matrix = confusion_matrix(y_test, y_pred)
-plt.figure(figsize = (10,7))
-sn.heatmap(matrix, annot=True)
+    return evaluate(60,X,Y,loaded_clf)

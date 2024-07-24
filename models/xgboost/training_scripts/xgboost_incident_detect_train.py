@@ -26,7 +26,7 @@ def xgboost_incident_detect_train(dataset_path: str):
     X= X.values
     Y= Y.values
     
-    print("SPlitting into test train")
+    print("Splitting into test train")
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2)
     
     sample_weights = compute_sample_weight(

@@ -25,8 +25,6 @@ def standardize(col):
 
 def incident_classification_eval(dataset_path,model_path):
 
-    df = pd.read_csv(dataset_path)
-
     data_types = {
         'incident_edge': 'object',  # Replace 'Column_Name1' with the actual column name
         'incident_lane': 'object'  # Replace 'Column_Name2' with the actual column name
