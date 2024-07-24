@@ -26,7 +26,6 @@ def get_edge_ids():
 
 def incident_localization_train(dataset_path: str):
 
-    df = pd.read_csv(dataset_path)
 
     data_types = {
         'incident_edge': 'object',  # Replace 'Column_Name1' with the actual column name

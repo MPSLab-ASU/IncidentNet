@@ -22,8 +22,6 @@ def incident_classification_train(dataset_path: str):
     TabNet training for incident category classification
     """
 
-    df = pd.read_csv(dataset_path)
-
     data_types = {
         'incident_edge': 'object',  # Replace 'Column_Name1' with the actual column name
         'incident_lane': 'object'  # Replace 'Column_Name2' with the actual column name
